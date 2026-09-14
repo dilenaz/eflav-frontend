@@ -1,0 +1,43 @@
+{
+  "name": "eflav-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "db:migrate": "node scripts/migrate.js",
+    "db:backup": "node scripts/backup-db.js",
+    "db:backup:donations": "node scripts/backup-donations.js",
+    "db:export:public": "node scripts/export-public-content.js",
+    "admin:create": "node scripts/create-admin.js",
+    "setup:local:windows": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/setup-local-windows.ps1",
+    "check:production": "node scripts/check-production.js",
+    "verify": "npm run lint && npm test && npm run build",
+    "start": "next start",
+    "test": "node --test tests/*.test.mjs",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.6",
+    "next": "^16.3.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "^16.3.1",
+    "postcss": "^8.5.19",
+    "tailwindcss": "^4"
+  },
+  "overrides": {
+    "postcss": "$postcss"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

@@ -1,0 +1,40 @@
+server {
+    listen 80;
+    server_name vakif.example.org;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name vakif.example.org;
+    server_tokens off;
+
+    ssl_certificate /etc/letsencrypt/live/vakif.example.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/vakif.example.org/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    client_max_body_size 6m;
+
+    location /uploads/ {
+        alias /var/lib/eflav/uploads/;
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        add_header X-Content-Type-Options nosniff;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        # This deployment uses a single trusted reverse proxy. Overwrite
+        # client-supplied forwarding headers so rate limits cannot be spoofed.
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_hide_header X-Powered-By;
+    }
+}

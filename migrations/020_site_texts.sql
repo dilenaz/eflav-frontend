@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS site_texts (
+  text_key VARCHAR(100) NOT NULL,
+  group_name VARCHAR(100) NOT NULL,
+  label VARCHAR(150) NOT NULL,
+  value TEXT NOT NULL,
+  input_type ENUM('text','textarea') NOT NULL DEFAULT 'text',
+  sort_order INT NOT NULL DEFAULT 0,
+  updated_by INT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (text_key),
+  KEY idx_site_texts_group (group_name, sort_order),
+  CONSTRAINT fk_site_texts_admin FOREIGN KEY (updated_by) REFERENCES admins(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO site_texts (text_key, group_name, label, value, input_type, sort_order) VALUES
+('home.hero.title_line_1','Ana Sayfa · Karşılama','Ana başlık, ilk satır','İyilik Yolunda','text',10),
+('home.hero.title_line_2','Ana Sayfa · Karşılama','Ana başlık, ikinci satır','Birlikte...','text',20),
+('home.hero.tagline','Ana Sayfa · Karşılama','Vurgu cümlesi','Bir El Uzat, Bir Hayata Dokun.','text',30),
+('home.hero.promise','Ana Sayfa · Karşılama','Kısa söz','İnsana değer\nTopluma nefes\nGeleceğe umut','textarea',40),
+('home.hero.heart_message','Ana Sayfa · Karşılama','Görsel üzerindeki söz','Paylaştıkça\nçoğalır,\niyilikle büyür\numutlar.','textarea',50),
+('home.activities.eyebrow','Ana Sayfa · Faaliyetler','Üst başlık','Doğrulanmış Çalışmalar','text',10),
+('home.activities.title','Ana Sayfa · Faaliyetler','Başlık','Faaliyetlerimiz','text',20),
+('home.activities.description','Ana Sayfa · Faaliyetler','Açıklama','Vakfımızın gerçekleştirdiği ve kamuya açık kaynaklarla doğrulanabilen faaliyetleri inceleyin.','textarea',30),
+('home.gallery.eyebrow','Ana Sayfa · Fotoğraf Albümü','Üst başlık','Arşiv','text',10),
+('home.gallery.title','Ana Sayfa · Fotoğraf Albümü','Başlık','Fotoğraf Albümü','text',20),
+('home.gallery.description','Ana Sayfa · Fotoğraf Albümü','Açıklama','Faaliyet ve buluşmalarımızdan kareler.','textarea',30),
+('home.news.eyebrow','Ana Sayfa · Haberler','Üst başlık','Güncel Paylaşımlar','text',10),
+('home.news.title','Ana Sayfa · Haberler','Başlık','Vakıftan Haberler','text',20),
+('home.news.description','Ana Sayfa · Haberler','Açıklama','Karabük Eflani Hayır Kervanı Vakfı tarafından gerçekleştirilen faaliyetler, duyurular ve güncel gelişmeleri takip edebilirsiniz.','textarea',30),
+('home.applications.eyebrow','Ana Sayfa · Başvurular','Üst başlık','Dayanışmaya Katılın','text',10),
+('home.applications.title','Ana Sayfa · Başvurular','Başlık','Başvuru ve Gönüllülük','text',20),
+('home.applications.description','Ana Sayfa · Başvurular','Açıklama','Başvuru dönemleri ve güncel koşullar duyurularımızda yayımlanır. Bilgi almak veya gönüllü olmak için bizimle iletişime geçebilirsiniz.','textarea',30),
+('donation.page.title','Bağış Sayfası','Sayfa başlığı','Bağış Yapın','text',10),
+('donation.page.subtitle','Bağış Sayfası','Sayfa alt başlığı','Geleceğe Umut Olun','text',20),
+('donation.page.intro','Bağış Sayfası','Giriş açıklaması','Eğitim, sosyal yardım, sağlık, kültürel miras ve toplumsal kalkınma çalışmalarımıza destek vererek dayanışma zincirinin bir halkası olabilirsiniz.','textarea',30),
+('donation.section.eyebrow','Bağış Alanı','Üst başlık','Bağış ve Dayanışma','text',10),
+('donation.section.title','Bağış Alanı','Başlık','İyiliğe güvenle ortak olun','text',20),
+('donation.section.description','Bağış Alanı','Açıklama','Desteğiniz; eğitim, sosyal yardım, kültürel miras ve toplumsal kalkınma çalışmalarımızın daha çok insana ulaşmasını sağlar.','textarea',30),
+('donation.bank_name','Bağış Alanı','Banka adı','Ziraat Bankası','text',40),
+('donation.iban','Bağış Alanı','IBAN','TR66 0001 0026 2997 8393 0750 01','text',50),
+('donation.account_owner','Bağış Alanı','Hesap sahibi','Karabük Eflani Hayır Kervanı Vakfı','text',60),
+('donation.qr_caption','Bağış Alanı','QR kod açıklaması','Kameranızla okutarak bağış yapın','text',70)
+ON DUPLICATE KEY UPDATE text_key=VALUES(text_key);

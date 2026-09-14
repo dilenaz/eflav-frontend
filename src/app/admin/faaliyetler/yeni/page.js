@@ -1,0 +1,1 @@
+import ActivityForm from'@/components/admin/ActivityForm';export default function Page(){return <section className="mx-auto max-w-4xl"><h1 className="mb-8 text-3xl font-black">Yeni Faaliyet</h1><ActivityForm/></section>}

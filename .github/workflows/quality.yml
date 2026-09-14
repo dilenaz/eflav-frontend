@@ -1,0 +1,52 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: eflav_ci
+      DB_PASSWORD: ci-password
+      DB_NAME: eflav_ci
+      JWT_SECRET: integration-secret-value-with-at-least-32-characters
+      DATA_ENCRYPTION_KEY: integration-encryption-value-at-least-32-characters
+      NEXT_PUBLIC_SITE_URL: https://integration.eflav.invalid
+      UPLOAD_DIR: /tmp/eflav-uploads
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ci-turnstile-site-key
+      TURNSTILE_SECRET_KEY: ci-turnstile-secret-key
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: eflav_ci
+          MYSQL_USER: eflav_ci
+          MYSQL_PASSWORD: ci-password
+          MYSQL_ROOT_PASSWORD: root-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -proot-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npm run check:production
+      - run: npm run db:migrate
+      - run: npm run build

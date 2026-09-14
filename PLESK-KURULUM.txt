@@ -1,0 +1,74 @@
+EFLANİ HAYIR KERVANI VAKFI — PLESK KURULUMU
+=============================================
+
+Bu paket eflanihayirkervanivakfi.com alan adı için hazırlanmıştır.
+ÖNEMLİ: Plesk, Next.js'i resmî olarak garanti etmez. Sunucuda Node.js 20.9 yoksa
+veya app.cjs/web.config çalışmazsa hosting firması uygulamayı VPS/Node reverse proxy üzerinde
+çalıştırmalıdır.
+
+1) PLESK'TE VERİTABANI OLUŞTURUN
+--------------------------------
+- Web Siteleri ve Alan Adları > Veritabanları > Veritabanı Ekle
+- Yeni bir veritabanı ve yalnız bu veritabanına yetkili kullanıcı oluşturun.
+- Veritabanı adı, kullanıcı adı ve parolayı güvenli bir yere kaydedin.
+
+2) DOSYALARI YÜKLEYİN
+---------------------
+- Paketi httpdocs klasörüne yükleyin ve çıkartın.
+- package.json ile app.cjs dosyasının doğrudan httpdocs içinde olduğunu doğrulayın.
+- public/uploads adlı kalıcı ve yazılabilir bir klasör oluşturun.
+- ENV-AYARLARI.txt dosyasının bir kopyasını .env adıyla kaydedin.
+- .env içindeki CHANGE_ME alanlarını gerçek değerlerle doldurun.
+- .env dosyasının web üzerinden indirilemediğini doğrulayın.
+
+3) NODE.JS AYARLARI (BU SUNUCU: WINDOWS + IISNODE)
+-------------------------------------------------
+- Plesk > PowerShell Terminal bölümünü açın.
+- Şu komutları çalıştırın:
+
+  cd httpdocs
+  npm ci --cache C:\home\eflanihayirkervanivakfi.com\.npm-cache
+
+- web.config, bütün istekleri app.cjs üzerinden IIS/iisnode'a yönlendirir.
+
+4) VERİTABANI VE DERLEME
+------------------------
+PowerShell Terminal bölümünde httpdocs klasöründeyken sırayla:
+
+  npm run db:migrate
+
+çalıştırın. Daha sonra Plesk > Veritabanları > phpMyAdmin > İçe Aktar bölümünden
+pakette public-content.sql dosyası varsa seçip içe aktarın. Bu dosya yoksa bu
+adımı atlayın; doğrulanmış başlangıç içerikleri migration sırasında oluşturulur.
+
+İlk yönetici için .env dosyasındaki INITIAL_ADMIN_NAME,
+INITIAL_ADMIN_EMAIL ve INITIAL_ADMIN_PASSWORD alanlarını geçici olarak doldurun.
+Parola en az 12 karakter olmalıdır. Ardından şu betiği çalıştırın:
+
+  npm run admin:create
+
+Yönetici oluşturulduktan sonra üç INITIAL_ADMIN_* satırının değerlerini silin.
+
+Son olarak sırayla:
+
+  npm run check:production
+  npm run build
+
+komutlarını çalıştırın. İlk ziyaret IIS/iisnode uygulamasını başlatır.
+
+5) SSL VE SON KONTROL
+---------------------
+- Alan adı kayıt kuruluşunda ad sunucularını ns1.demsebilgisayar.com ve
+  ns2.demsebilgisayar.com olarak ayarlayın. DNS çözülmeden sertifika alınamaz.
+- SSL/TLS Sertifikaları > Let's Encrypt ile alan adı ve www için sertifika alın.
+- HTTP'den HTTPS'ye kalıcı yönlendirmeyi açın.
+- Şu adreslerin çalıştığını kontrol edin:
+  https://eflanihayirkervanivakfi.com/
+  https://eflanihayirkervanivakfi.com/api/health
+  https://eflanihayirkervanivakfi.com/admin/giris
+- /api/health yanıtında database "ok" olmalıdır.
+- Yönetim adresleri giriş yapılmadan açılmamalıdır.
+
+Sorun olursa Plesk > Web Siteleri ve Alan Adları > Günlükler bölümündeki Node.js
+kayıtlarını kontrol edin. Plesk app.cjs'i çalıştırmıyorsa hosting firmasından bu
+Next.js uygulaması için VPS/Node.js reverse proxy kurulumu isteyin.

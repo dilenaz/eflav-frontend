@@ -1,0 +1,41 @@
+[Unit]
+Description=Eflav Next.js Web Application
+Wants=network-online.target
+After=network-online.target mysql.service
+StartLimitIntervalSec=60
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=eflav
+Group=eflav
+WorkingDirectory=/opt/eflav/current
+EnvironmentFile=/etc/eflav/eflav.env
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3000
+ExecStartPre=/usr/bin/test -e /opt/eflav/current/public/uploads
+ExecStartPre=/usr/bin/npm run check:production
+ExecStartPre=/usr/bin/npm run db:migrate
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/opt/eflav/current/.next /var/lib/eflav/uploads /var/backups/eflav
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

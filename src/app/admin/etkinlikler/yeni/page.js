@@ -1,0 +1,1 @@
+import EventForm from '@/components/admin/EventForm';export default function Page(){return <section className="mx-auto max-w-4xl"><h1 className="mb-8 text-3xl font-black">Yeni Etkinlik</h1><EventForm/></section>}
